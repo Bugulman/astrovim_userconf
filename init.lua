@@ -222,8 +222,11 @@ local config = {
       ["<C-n>"] = { ":Neotree reveal_force_cwd<Enter>", desc = "reveal Neotree window" },
       -- hop key
       ["jf"] = { ":HopChar2<cr>", silent=true, desc = "find letter" },
-      -- ["<m-o>"] = { "<cmd>BrowseBookmarks<cr>", desc = "browse_bookmarks" },
-      -- ["<m-i>"] = { "<cmd>BrowseInputSearch<cr>", desc = "google search" },
+      ["<m-o>"] = { "<cmd>BrowseBookmarks<cr>", desc = "browse_bookmarks" },
+      ["<m-i>"] = { "<cmd>BrowseInputSearch<cr>", desc = "google search" },
+      ["<leader>fp"] = { ":lua require('telescope').extensions.projects.projects()<CR>", desc = "project search" },
+      ["<C-C>"] = { '"+yy', desc = "copy to global buffer" },
+      ["<p>"] = { '"+gP', desc = "paste from global buffer" },
       -- quick save
       -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
     },
@@ -385,7 +388,7 @@ neoscroll.setup {
   respect_scrolloff = true, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
   cursor_scrolls_alone = false, -- The cursor will keep on scrolling even if the window cannot scroll further
 }
---project
+--NOTE: project plugin
 local status_ok, project = pcall(require, "project_nvim")
 if not status_ok then
 	return
@@ -430,12 +433,11 @@ if not tele_status_ok then
 end
 telescope.load_extension('projects')
 
+-- NOTE: todo plugin
 local status_ok, todo_comments = pcall(require, "todo-comments")
 if not status_ok then
   return
 end
-
--- local icons = require "user.icons"
 
 local error_red = "#F44747"
 local warning_orange = "#ff8800"
@@ -500,4 +502,63 @@ todo_comments.setup {
     -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
   },
 }
+--NOTE:browse plugin
+local status_ok, browse = pcall(require, "browse")
+if not status_ok then
+  return
+end
+
+require('browse').setup({
+  -- search provider you want to use
+  provider = "google", -- default
+})
+
+browse.setup {
+  provider = "brave",
+}
+
+local bookmarks = {
+    "https://srv.rfdyn.ru",
+    "https://mail.rfdyn.ru/#1",
+    "https://rchat.rfdyn.ru/home",
+    "https://srv.rfdyn.ru/releases/releases_dir.php",
+    "https://petrowiki.spe.org/PetroWiki",
+    "https://stepik.org/",
+    "https://baguzin.ru/wp/",
+    "https://pbpython.com/index.html",
+    "https://github.com/rockerBOO/awesome-neovim",
+    "https://doc.rust-lang.org/book/",
+    "https://aur.archlinux.org/packages/",
+    "https://news.ycombinator.com/",
+  -- "https://github.com/neovim/neovim",
+  -- "https://neovim.discourse.group/",
+}
+
+local function command(name, rhs, opts)
+  opts = opts or {}
+  vim.api.nvim_create_user_command(name, rhs, opts)
+end
+
+command("BrowseInputSearch", function()
+  browse.input_search()
+end, {})
+
+command("Browse", function()
+  browse.browse { bookmarks = bookmarks }
+end, {})
+command("BrowseBookmarks", function()
+  browse.open_bookmarks { bookmarks = bookmarks }
+end, {})
+command("BrowseDevdocsSearch", function()
+  browse.devdocs.search()
+end, {})
+command("BrowseDevdocsFiletypeSearch", function()
+  browse.devdocs.search_with_filetype()
+end, {})
+command("BrowseMdnSearch", function()
+  browse.mdn.search()
+end, {})
+local opts = { noremap = true, silent = true }
+
+
 return config
