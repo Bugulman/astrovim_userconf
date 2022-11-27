@@ -72,21 +72,20 @@ local config = {
 
   -- Set dashboard header
   header = {
-[[⠰⡿⠿⠛⠛⠻⠿⣷]],
-[[⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀]],
-[[⠀⠀⠀⠀⠀⢸⣿⣿⣷⠀⠀⠀⠀⠛⠛⣿⣿⣿⡛⠿⠷]],
-[[⠀⠀⠀⠀⠀⠘⠿⠿⠋⠀⠀⠀⠀⠀⠀⣿⣿⣿⠇]],
-[[⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠁]],
-[[]],
-[[⠀⠀⠀⠀⣿⣷⣄⠀⢶⣶⣷⣶⣶⣤⣀]],
-[[⠀⠀⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⠈⠙⠻⠗]],
-[[⠀⠀⠀⣰⣿⣿⣿⠀⠀⠀⠀⢀⣀⣠⣤⣴⣶⡄]],
-[[⠀⣠⣾⣿⣿⣿⣥⣶⣶⣿⣿⣿⣿⣿⠿⠿⠛⠃]],
-[[⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄]],
-[[⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁]],
-[[⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁]],
-[[⠀⠀⠛⢿⣿⣿⣿⣿⣿⣿⡿⠟]],
-[[⠀⠀⠀⠀⠀⠉⠉⠉ ]],
+[[░░░░░░░░░░▀▀▀██████▄▄▄░░░░░░░░░░]],
+[[░░░░░░░░░░░░░░░░░▀▀▀████▄░░░░░░░]],
+[[░░░░░░░░░░▄███████▀░░░▀███▄░░░░░]],
+[[░░░░░░░░▄███████▀░░░░░░░▀███▄░░░]],
+[[░░░░░░▄████████░░░░░░░░░░░███▄░░]],
+[[░░░░░██████████▄░░░░░░░░░░░███▌░]],
+[[░░░░░▀█████▀░▀███▄░░░░░░░░░▐███░]],
+[[░░░░░░░▀█▀░░░░░▀███▄░░░░░░░▐███░]],
+[[░░░░░░░░░░░░░░░░░▀███▄░░░░░███▌░]],
+[[░░░░▄██▄░░░░░░░░░░░▀███▄░░▐███░░]],
+[[░░▄██████▄░░░░░░░░░░░▀███▄███░░░]],
+[[░█████▀▀████▄▄░░░░░░░░▄█████░░░░]],
+[[░████▀░░░▀▀█████▄▄▄▄█████████▄░░]],
+[[░░▀▀░░░░░░░░░▀▀██████▀▀░░░▀▀██░░]],
   },
 
   -- Default theme configuration
@@ -203,11 +202,9 @@ local config = {
   -- automatically pick-up stored data by this setting.)
   mappings = {
     -- first key is the mode
+    -- FAQ: mapping settings
     n = {
       -- second key is the lefthand side of the map
--- keymap("", "L", ":HopWordCurrentLine<cr>", { silent = true })
--- keymap("", "S", ":HopChar2<cr>", { silent = true })
--- keymap("", "Q", ":HopPattern<cr>", { silent = true })
       -- mappings seen under group name "Buffer"
       ["<leader>bb"] = { "<cmd>tabnew<cr>", desc = "New tab" },
       ["<leader>bc"] = { "<cmd>BufferLinePickClose<cr>", desc = "Pick to close" },
@@ -222,9 +219,13 @@ local config = {
       ["<C-n>"] = { ":Neotree reveal_force_cwd<Enter>", desc = "reveal Neotree window" },
       -- hop key
       ["jf"] = { ":HopChar2<cr>", silent=true, desc = "find letter" },
+      --browse key
       ["<m-o>"] = { "<cmd>BrowseBookmarks<cr>", desc = "browse_bookmarks" },
       ["<m-i>"] = { "<cmd>BrowseInputSearch<cr>", desc = "google search" },
+      --telescope key
       ["<leader>fp"] = { ":lua require('telescope').extensions.projects.projects()<CR>", desc = "project search" },
+      ["<leader>fp"] = { ":TodoTelescope", desc = "todo_search" },
+      ["<leader>ss"] = { "lua require('spectre').open()<CR>", desc = "spectre" },
       ["<C-C>"] = { '"+yy', desc = "copy to global buffer" },
       ["<p>"] = { '"+gP', desc = "paste from global buffer" },
       -- quick save
@@ -366,7 +367,7 @@ local config = {
   end,
 }
 
---HOP
+--NOTE: HOP plugin
 local status_ok, hop = pcall(require, "hop")
 if not status_ok then
 	return
@@ -374,7 +375,7 @@ end
 hop.setup()
 local opts = { noremap = true, silent = true }
 local keymap = vim.api.nvim_set_keymap
---neoscroll
+--NOTE:neoscroll plugin
 local status_ok, neoscroll = pcall(require, "neoscroll")
 if not status_ok then
   return
@@ -410,7 +411,7 @@ project.setup({
 	--- **"pattern"** uses vim-rooter like glob pattern matching. Here
 	--- order matters: if one is not detected, the other is used as fallback. You
 	--- can also delete or rearangne the detection methods.
-	-- detection_methods = { "lsp", "pattern" }, -- NOTE: lsp detection will get annoying with multiple langs in one project
+	-- detection_methods = { "lsp", "pattern" }, -- NOTE lsp detection will get annoying with multiple langs in one project
 	detection_methods = { "pattern" },
 
 	---@usage patterns used to detect root dir, when **"pattern"** is in detection_methods
@@ -458,7 +459,7 @@ todo_comments.setup {
       -- signs = false, -- configure signs for some keywords individually
     },
     TODO = { icon = "", color = hint_blue, alt = { "TIP" } },
-    HACK = { icon = "", color = warning_orange },
+    HACK = { icon = "", color = warning_orange, alt={ "FAQ" } },
     WARN = { icon = "", color = warning_orange, alt = { "WARNING", "XXX" } },
     PERF = { icon = "", color = perf_purple, alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
     NOTE = { icon = "", color = note_green, alt = { "INFO" } },
@@ -473,7 +474,7 @@ todo_comments.setup {
     -- keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
     keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
     after = "fg", -- "fg" or "bg" or empty
-    pattern = [[.*<(KEYWORDS)\s*:]], -- ругялярка для подсветки NOTE: пробел должен стоять в конце!!!
+    pattern = [[.*<(KEYWORDS)\s*:]], -- ругялярка для подсветки XXX: пробел должен стоять в конце!!!
     comments_only = true, -- uses treesitter to match keywords in comments only
     max_line_len = 400, -- ignore lines longer than this
     exclude = { "markdown" }, -- list of file types to exclude highlighting
@@ -498,7 +499,7 @@ todo_comments.setup {
     },
     -- regex that will be used to match keywords.
     -- don't replace the (KEYWORDS) placeholder
-    pattern = [[b(KEYWORDS):]], -- ripgrep regex
+    pattern = [[\b(KEYWORDS):]], -- ripgrep regex
     -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
   },
 }
@@ -507,16 +508,13 @@ local status_ok, browse = pcall(require, "browse")
 if not status_ok then
   return
 end
-
 require('browse').setup({
   -- search provider you want to use
   provider = "google", -- default
 })
-
 browse.setup {
   provider = "brave",
 }
-
 local bookmarks = {
     "https://srv.rfdyn.ru",
     "https://mail.rfdyn.ru/#1",
@@ -560,5 +558,141 @@ command("BrowseMdnSearch", function()
 end, {})
 local opts = { noremap = true, silent = true }
 
+--NOTE: spectre plugin
+local status_ok, spectre = pcall(require, "spectre")
+if not status_ok then
+	return
+end
+spectre.setup({
+
+	color_devicons = true,
+	highlight = {
+		ui = "String",
+		search = "DiffChange",
+		replace = "DiffDelete",
+	},
+	mapping = {
+		["toggle_line"] = {
+			map = "t",
+			cmd = "<cmd>lua require('spectre').toggle_line()<CR>",
+			desc = "toggle current item",
+		},
+		["enter_file"] = {
+			map = "<cr>",
+			cmd = "<cmd>lua require('spectre.actions').select_entry()<CR>",
+			desc = "goto current file",
+		},
+		["send_to_qf"] = {
+			map = "Q",
+			cmd = "<cmd>lua require('spectre.actions').send_to_qf()<CR>",
+			desc = "send all item to quickfix",
+		},
+		["replace_cmd"] = {
+			map = "c",
+			cmd = "<cmd>lua require('spectre.actions').replace_cmd()<CR>",
+			desc = "input replace vim command",
+		},
+		["show_option_menu"] = {
+			map = "o",
+			cmd = "<cmd>lua require('spectre').show_options()<CR>",
+			desc = "show option",
+		},
+		["run_replace"] = {
+			map = "R",
+			cmd = "<cmd>lua require('spectre.actions').run_replace()<CR>",
+			desc = "replace all",
+		},
+		["change_view_mode"] = {
+			map = "m",
+			cmd = "<cmd>lua require('spectre').change_view()<CR>",
+			desc = "change result view mode",
+		},
+		["toggle_ignore_case"] = {
+			map = "I",
+			cmd = "<cmd>lua require('spectre').change_options('ignore-case')<CR>",
+			desc = "toggle ignore case",
+		},
+		["toggle_ignore_hidden"] = {
+			map = "H",
+			cmd = "<cmd>lua require('spectre').change_options('hidden')<CR>",
+			desc = "toggle search hidden",
+		},
+		-- you can put your mapping here it only use normal mode
+	},
+	find_engine = {
+		-- rg is map with finder_cmd
+		["rg"] = {
+			cmd = "rg",
+			-- default args
+			args = {
+				"--color=never",
+				"--no-heading",
+				"--with-filename",
+				"--line-number",
+				"--column",
+			},
+			options = {
+				["ignore-case"] = {
+					value = "--ignore-case",
+					icon = "[I]",
+					desc = "ignore case",
+				},
+				["hidden"] = {
+					value = "--hidden",
+					desc = "hidden file",
+					icon = "[H]",
+				},
+				-- you can put any option you want here it can toggle with
+				-- show_option function
+			},
+		},
+		["ag"] = {
+			cmd = "ag",
+			args = {
+				"--vimgrep",
+				"-s",
+			},
+			options = {
+				["ignore-case"] = {
+					value = "-i",
+					icon = "[I]",
+					desc = "ignore case",
+				},
+				["hidden"] = {
+					value = "--hidden",
+					desc = "hidden file",
+					icon = "[H]",
+				},
+			},
+		},
+	},
+	replace_engine = {
+		["sed"] = {
+			cmd = "sed",
+			args = nil,
+		},
+		options = {
+			["ignore-case"] = {
+				value = "--ignore-case",
+				icon = "[I]",
+				desc = "ignore case",
+			},
+		},
+	},
+	default = {
+		find = {
+			--pick one of item in find_engine
+			cmd = "rg",
+			options = { "ignore-case" },
+		},
+		replace = {
+			--pick one of item in replace_engine
+			cmd = "sed",
+		},
+	},
+	replace_vim_cmd = "cdo",
+	is_open_target_win = true, --open file on opener window
+	is_insert_mode = false, -- start open panel on is_insert_mode
+})
 
 return config
