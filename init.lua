@@ -221,7 +221,7 @@ local config = {
       ["<leader>x"] = { ":bp<bar>sp<bar>bn<bar>bd!<Enter>", desc = "open config file" },
       ["<C-n>"] = { ":Neotree reveal_force_cwd<Enter>", desc = "reveal Neotree window" },
       -- hop key
-      ["jk"] = { ":HopChar2<cr>", silent=true, desc = "find letter" },
+      ["jf"] = { ":HopChar2<cr>", silent=true, desc = "find letter" },
       -- ["<m-o>"] = { "<cmd>BrowseBookmarks<cr>", desc = "browse_bookmarks" },
       -- ["<m-i>"] = { "<cmd>BrowseInputSearch<cr>", desc = "google search" },
       -- quick save
@@ -369,16 +369,13 @@ if not status_ok then
 	return
 end
 hop.setup()
-
 local opts = { noremap = true, silent = true }
 local keymap = vim.api.nvim_set_keymap
-
 --neoscroll
 local status_ok, neoscroll = pcall(require, "neoscroll")
 if not status_ok then
   return
 end
-
 neoscroll.setup {
   -- All these keys will be mapped to their corresponding default scrolling animation
   mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "<C-y>", "<C-e>", "zt", "zz", "zb" },
@@ -388,7 +385,119 @@ neoscroll.setup {
   respect_scrolloff = true, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
   cursor_scrolls_alone = false, -- The cursor will keep on scrolling even if the window cannot scroll further
 }
+--project
+local status_ok, project = pcall(require, "project_nvim")
+if not status_ok then
+	return
+end
+project.setup({
+	---@usage set to false to disable project.nvim.
+	--- This is on by default since it's currently the expected behavior.
+	active = true,
 
+	on_config_done = nil,
 
+	---@usage set to true to disable setting the current-woriking directory
+	--- Manual mode doesn't automatically change your root directory, so you have
+	--- the option to manually do so using `:ProjectRoot` command.
+	manual_mode = false,
 
+	---@usage Methods of detecting the root directory
+	--- Allowed values: **"lsp"** uses the native neovim lsp
+	--- **"pattern"** uses vim-rooter like glob pattern matching. Here
+	--- order matters: if one is not detected, the other is used as fallback. You
+	--- can also delete or rearangne the detection methods.
+	-- detection_methods = { "lsp", "pattern" }, -- NOTE: lsp detection will get annoying with multiple langs in one project
+	detection_methods = { "pattern" },
+
+	---@usage patterns used to detect root dir, when **"pattern"** is in detection_methods
+	patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+
+	---@ Show hidden files in telescope when searching for files in a project
+	show_hidden = false,
+
+	silent_chdir = true,
+
+	ignore_lsp = {},
+
+	---@type string
+	---@usage path to store the project history for use in telescope
+  datapath = vim.fn.stdpath("data"),
+})
+local tele_status_ok, telescope = pcall(require, "telescope")
+if not tele_status_ok then
+	return
+end
+telescope.load_extension('projects')
+
+local status_ok, todo_comments = pcall(require, "todo-comments")
+if not status_ok then
+  return
+end
+
+-- local icons = require "user.icons"
+
+local error_red = "#F44747"
+local warning_orange = "#ff8800"
+-- local info_yellow = "#FFCC66"
+local hint_blue = "#4FC1FF"
+local perf_purple = "#7C3AED"
+local note_green = '#10B981'
+-- [[TODO] ]
+todo_comments.setup {
+  signs = true, -- show icons in the signs column
+  sign_priority = 8, -- sign priority
+  -- keywords recognized as todo comments
+  keywords = {
+    FIX = {
+      icon = "", -- icon used for the sign, and in search results
+      color = error_red, -- can be a hex color, or a named color (see below)
+      alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
+      -- signs = false, -- configure signs for some keywords individually
+    },
+    TODO = { icon = "", color = hint_blue, alt = { "TIP" } },
+    HACK = { icon = "", color = warning_orange },
+    WARN = { icon = "", color = warning_orange, alt = { "WARNING", "XXX" } },
+    PERF = { icon = "", color = perf_purple, alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+    NOTE = { icon = "", color = note_green, alt = { "INFO" } },
+  },
+  -- merge_keywords = true, -- when true, custom keywords will be merged with the defaults
+  -- highlighting of the line containing the todo comment
+  -- * before: highlights before the keyword (typically comment characters)
+  -- * keyword: highlights of the keyword
+  -- * after: highlights after the keyword (todo text)
+  highlight = {
+    before = "", -- "fg" or "bg" or empty
+    -- keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+    after = "fg", -- "fg" or "bg" or empty
+    pattern = [[.*<(KEYWORDS)\s*:]], -- ругялярка для подсветки NOTE: пробел должен стоять в конце!!!
+    comments_only = true, -- uses treesitter to match keywords in comments only
+    max_line_len = 400, -- ignore lines longer than this
+    exclude = { "markdown" }, -- list of file types to exclude highlighting
+  },
+  -- list of named colors where we try to extract the guifg from the
+  -- list of hilight groups or use the hex color if hl not found as a fallback
+  -- colors = {
+  --   error = { "LspDiagnosticsDefaultError", "ErrorMsg", "#DC2626" },
+  --   warning = { "LspDiagnosticsDefaultWarning", "WarningMsg", "#FBBF24" },
+  --   info = { "LspDiagnosticsDefaultInformation", "#2563EB" },
+  --   hint = { "LspDiagnosticsDefaultHint", "#10B981" },
+  --   default = { "Identifier", "#7C3AED" },
+  -- },
+  search = {
+    command = "rg",
+    args = {
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+    },
+    -- regex that will be used to match keywords.
+    -- don't replace the (KEYWORDS) placeholder
+    pattern = [[b(KEYWORDS):]], -- ripgrep regex
+    -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
+  },
+}
 return config
