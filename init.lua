@@ -4,7 +4,10 @@ local home = vim.fn.expand("D:/soft/obsidian/My_md_zettel")
 -- You can think of a Lua "table" as a dictionary like data structure the
 -- normal format is "key = value". These also handle array like data structures
 -- where a value with no key simply has an implicit numeric key
-
+vim.cmd [[
+let g:python3_host_prog = 'C:/Python310/python.exe'
+let g:virtualenv_directory = 'C:/Users/reg16/Envs'
+]]
 local config = {
 
   -- Configure AstroNvim updates
@@ -26,7 +29,7 @@ local config = {
     -- },
   },
 
-  -- Set colorscheme to use
+  -- FAQ: Set colorscheme to use
   colorscheme = "default_theme",
 
   -- Add highlight groups in any theme
@@ -249,11 +252,11 @@ local config = {
     },
   },
 
-  -- Configure plugins
+  --FAQ: Configure plugins
   plugins = {
     init = {
       -- You can disable default plugins as follows:
-      ["nvim-neo-tree/neo-tree.nvim"] = { disable = true },
+      -- ["nvim-neo-tree/neo-tree.nvim"] = { disable = true },
 
       -- You can also add new plugins here as well:
       -- Add plugins, the packer syntax without the "use"
@@ -268,8 +271,13 @@ local config = {
       { 'lalitmee/browse.nvim' },
       { 'hkupty/iron.nvim' },
       {"ahmedkhalf/project.nvim"},
-      {"windwp/nvim-spectre"}
-
+      {"windwp/nvim-spectre"},
+      {"morhetz/gruvbox"},
+      {"flazz/vim-colorschemes"},
+      {"tomasr/molokai"},
+      {"jmcantrell/vim-virtualenv"},
+      -- {"SirVer/ultisnips"},
+      -- {"honza/vim-snippets"}
 
       -- { "andweeb/presence.nvim" },
       -- {
@@ -868,4 +876,51 @@ require('telekasten').setup({
     rename_update_links = true,
 })
 
+-- NOTE: iron config
+local iron = require("iron.core")
+
+iron.setup {
+  config = {
+    -- Whether a repl should be discarded or not
+    scratch_repl = true,
+    -- Your repl definitions come here
+    repl_definition = {
+      sh = {
+        command = {"zsh"}
+      },
+      python = {
+        command = { "ipython" }
+        -- format = require("iron.fts.common").bracketed_paste,
+      }
+    },
+    preffered ={
+      python="ipython"
+      -- clojure = "lein"
+    },
+    -- How the repl window will be displayed
+    -- See below for more information
+    repl_open_cmd = require('iron.view').bottom(40),
+  },
+  -- Iron doesn't set keymaps by default anymore.
+  -- You can set them here or manually add keymaps to the functions in iron.core
+  keymaps = {
+    send_motion = "<space>sc",
+    visual_send = "<space>sc",
+    send_file = "<space>sf",
+    send_line = "<space>sl",
+    send_mark = "<space>sm",
+    mark_motion = "<space>mc",
+    mark_visual = "<space>mc",
+    remove_mark = "<space>md",
+    cr = "<space>s<cr>",
+    interrupt = "<space>s<space>",
+    exit = "<space>sq",
+    clear = "<space>cl",
+  },
+  -- If the highlight is on, you can change how it looks
+  -- For the available options, check nvim_set_hl
+  highlight = {
+    italic = true
+  }
+} 
 return config
