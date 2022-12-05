@@ -239,6 +239,9 @@ local config = {
       ["<leader>za"] = { ":lua require('telekasten').show_tags()<CR>", desc="show_tags"},
       -- ["<leader>#"] = { ":lua require('telekasten').show_tags()<CR>", desc="cast"},
       ["<leader>zr"] = { ":lua require('telekasten').rename_note()<CR>", desc="rename_note"},
+      --ultisnip mapping
+      -- ["ff"] = { "UltiSnipsJumpForwardTrigger", desc="Ulti_forward"},
+      -- ["bb"] = { "UltiSnipsJumpBackwardTrigger", desc="Ulti_backward"},
 
 
       ["<C-C>"] = { '"+yy', desc = "copy to global buffer" },
@@ -257,6 +260,9 @@ local config = {
     init = {
       -- You can disable default plugins as follows:
       -- ["nvim-neo-tree/neo-tree.nvim"] = { disable = true },
+      ["rafamadriz/friendly-snippets.nvim"] = { disable = true },
+      ["L3MON4D3/LuaSnip.nvim"] = { disable = true },
+      ["saadparwaiz1/cmp_luasnip.nvim"] = { disable = true },
 
       -- You can also add new plugins here as well:
       -- Add plugins, the packer syntax without the "use"
@@ -273,13 +279,14 @@ local config = {
       {"ahmedkhalf/project.nvim"},
       {"windwp/nvim-spectre"},
       {"morhetz/gruvbox"},
-      {"flazz/vim-colorschemes"},
       {"tomasr/molokai"},
       {"jmcantrell/vim-virtualenv"},
-      -- {"SirVer/ultisnips"},
-      -- {"honza/vim-snippets"}
+      {"nanotee/sqls.nvim"},
+      {"SirVer/ultisnips"},
+      {"honza/vim-snippets"},
+      {"quangnguyen30192/cmp-nvim-ultisnips"}
 
-      -- { "andweeb/presence.nvim" },
+      -- { "andweeb/presen,ce.nvim" },
       -- {
       --   "ray-x/lsp_signature.nvim",
       --   event = "BufRead",
@@ -325,18 +332,18 @@ local config = {
   },
 
   -- LuaSnip Options
-  luasnip = {
-    -- Extend filetypes
-    filetype_extend = {
-      -- javascript = { "javascriptreact" },
-    },
-    -- Configure luasnip loaders (vscode, lua, and/or snipmate)
-    vscode = {
-      -- Add paths for including more VS Code style snippets in luasnip
-      paths = {},
-    },
-  },
-
+  -- luasnip = {
+  --   -- Extend filetypes
+  --   filetype_extend = {
+  --     -- javascript = { "javascriptreact" },
+  --   },
+  --   -- Configure luasnip loaders (vscode, lua, and/or snipmate)
+  --   vscode = {
+  --     -- Add paths for including more VS Code style snippets in luasnip
+  --     paths = {},
+  --   },
+  -- },
+  --
   -- CMP Source Priorities
   -- modify here the priorities of default cmp sources
   -- higher value == higher priority
@@ -346,7 +353,7 @@ local config = {
   cmp = {
     source_priority = {
       nvim_lsp = 1000,
-      luasnip = 750,
+      ultisnips = 750,
       buffer = 500,
       path = 250,
     },
@@ -591,6 +598,7 @@ local bookmarks = {
     "https://srv.rfdyn.ru",
     "https://mail.rfdyn.ru/#1",
     "https://rchat.rfdyn.ru/home",
+    "https://support.rfdyn.ru/index.php",
     "https://srv.rfdyn.ru/releases/releases_dir.php",
     "https://petrowiki.spe.org/PetroWiki",
     "https://stepik.org/",
@@ -923,4 +931,44 @@ iron.setup {
     italic = true
   }
 } 
+ -- [NOTE:] CMP with ultisnip config
+local cmp_status_ok, cmp = pcall(require, "cmp")
+if not cmp_status_ok then
+  return
+end
+
+cmp.setup {
+ formatting = {
+   fields = { "kind", "abbr", "menu" },
+   format = function(entry, vim_item)
+     -- Kind icons
+     vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+     -- vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
+     vim_item.menu = ({
+       nvim_lsp = "[LSP]",
+       ultisnips = "[Snippet]",
+       buffer = "[Buffer]",
+       path = "[Path]",
+     })[entry.source.name]
+     return vim_item
+   end,
+ },
+ sources = {
+   { name = "nvim_lsp" },
+   { name = "ultisnips" },
+   { name = "buffer" },
+   { name = "path" },
+ },
+ confirm_opts = {
+   behavior = cmp.ConfirmBehavior.Replace,
+   select = false,
+ },
+ window = {
+     documentation = cmp.config.window.bordered(),
+     },
+ experimental = {
+   ghost_text = false,
+   native_menu = false,
+ },
+}
 return config
