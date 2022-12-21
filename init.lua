@@ -263,7 +263,9 @@ local config = {
       ["rafamadriz/friendly-snippets.nvim"] = { disable = true },
       ["L3MON4D3/LuaSnip.nvim"] = { disable = true },
       ["saadparwaiz1/cmp_luasnip.nvim"] = { disable = true },
-
+      ["mfussenegger/nvim-dap"] = { disable = false },
+      ["rcarriga/nvim-dap-ui"] = { disable = false },
+      ["jayp0521/mason-nvim-dap.nvim"] = { disable = false },
       -- You can also add new plugins here as well:
       -- Add plugins, the packer syntax without the "use"
       { "phaazon/hop.nvim" },
@@ -284,7 +286,8 @@ local config = {
       {"nanotee/sqls.nvim"},
       {"SirVer/ultisnips"},
       {"honza/vim-snippets"},
-      {"quangnguyen30192/cmp-nvim-ultisnips"}
+      {"quangnguyen30192/cmp-nvim-ultisnips"},
+      {"vim-scripts/vim-autopep8"}
 
       -- { "andweeb/presen,ce.nvim" },
       -- {
