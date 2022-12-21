@@ -5,7 +5,7 @@ local home = vim.fn.expand("D:/soft/obsidian/My_md_zettel")
 -- normal format is "key = value". These also handle array like data structures
 -- where a value with no key simply has an implicit numeric key
 vim.cmd [[
-let g:python3_host_prog = 'C:/Python310/python.exe'
+let g:python3_host_prog = '/usr/bin/python3'
 let g:virtualenv_directory = 'C:/Users/reg16/Envs'
 ]]
 local config = {
@@ -213,7 +213,6 @@ local config = {
       ["<m-o>"] = { "<cmd>BrowseBookmarks<cr>", desc = "browse_bookmarks" },
       ["<m-i>"] = { "<cmd>BrowseInputSearch<cr>", desc = "google search" },
       --telescope key
-      ["<leader>fp"] = { ":lua require('telescope').extensions.projects.projects()<CR>", desc = "project search" },
       ["<leader>ft"] = { ":TodoTelescope<CR>", desc = "todo_search" },
       ["<leader>ss"] = { ":lua require('spectre').open()<CR>", desc = "spectre" },
       --telekastennnoremap <leader>zf :lua require('telekasten').find_notes()<CR>
@@ -278,7 +277,6 @@ local config = {
       { 'renerocksai/calendar-vim' },
       { 'lalitmee/browse.nvim' },
       { 'hkupty/iron.nvim' },
-      {"ahmedkhalf/project.nvim"},
       {"windwp/nvim-spectre"},
       {"morhetz/gruvbox"},
       {"tomasr/molokai"},
@@ -471,50 +469,6 @@ neoscroll.setup {
   respect_scrolloff = true, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
   cursor_scrolls_alone = false, -- The cursor will keep on scrolling even if the window cannot scroll further
 }
---NOTE: project plugin
-local status_ok, project = pcall(require, "project_nvim")
-if not status_ok then
-	return
-end
-project.setup({
-	---@usage set to false to disable project.nvim.
-	--- This is on by default since it's currently the expected behavior.
-	active = true,
-
-	on_config_done = nil,
-
-	---@usage set to true to disable setting the current-woriking directory
-	--- Manual mode doesn't automatically change your root directory, so you have
-	--- the option to manually do so using `:ProjectRoot` command.
-	manual_mode = false,
-
-	---@usage Methods of detecting the root directory
-	--- Allowed values: **"lsp"** uses the native neovim lsp
-	--- **"pattern"** uses vim-rooter like glob pattern matching. Here
-	--- order matters: if one is not detected, the other is used as fallback. You
-	--- can also delete or rearangne the detection methods.
-	-- detection_methods = { "lsp", "pattern" }, -- NOTE lsp detection will get annoying with multiple langs in one project
-	detection_methods = { "pattern" },
-
-	---@usage patterns used to detect root dir, when **"pattern"** is in detection_methods
-	patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
-
-	---@ Show hidden files in telescope when searching for files in a project
-	show_hidden = false,
-
-	silent_chdir = true,
-
-	ignore_lsp = {},
-
-	---@type string
-	---@usage path to store the project history for use in telescope
-  datapath = vim.fn.stdpath("data"),
-})
-local tele_status_ok, telescope = pcall(require, "telescope")
-if not tele_status_ok then
-	return
-end
-telescope.load_extension('projects')
 
 -- NOTE: todo plugin
 local status_ok, todo_comments = pcall(require, "todo-comments")
