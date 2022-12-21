@@ -238,6 +238,7 @@ local config = {
       ["<leader>za"] = { ":lua require('telekasten').show_tags()<CR>", desc="show_tags"},
       -- ["<leader>#"] = { ":lua require('telekasten').show_tags()<CR>", desc="cast"},
       ["<leader>zr"] = { ":lua require('telekasten').rename_note()<CR>", desc="rename_note"},
+      -- TODO:сделать нормальный мапинг на DAP 
       --ultisnip mapping
       -- ["ff"] = { "UltiSnipsJumpForwardTrigger", desc="Ulti_forward"},
       -- ["bb"] = { "UltiSnipsJumpBackwardTrigger", desc="Ulti_backward"},
