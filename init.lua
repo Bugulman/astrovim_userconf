@@ -30,7 +30,7 @@ local config = {
   },
 
   -- FAQ: Set colorscheme to use
-  colorscheme = "default_theme",
+  colorscheme = "molokai",
 
   -- Add highlight groups in any theme
   highlights = {
@@ -239,6 +239,7 @@ local config = {
       ["<leader>za"] = { ":lua require('telekasten').show_tags()<CR>", desc="show_tags"},
       -- ["<leader>#"] = { ":lua require('telekasten').show_tags()<CR>", desc="cast"},
       ["<leader>zr"] = { ":lua require('telekasten').rename_note()<CR>", desc="rename_note"},
+      ["<F2>"] = { ":IronReplHere<CR>", desc="IPYTHON"},
       --ultisnip mapping
       -- ["ff"] = { "UltiSnipsJumpForwardTrigger", desc="Ulti_forward"},
       -- ["bb"] = { "UltiSnipsJumpBackwardTrigger", desc="Ulti_backward"},
@@ -919,7 +920,7 @@ iron.setup {
     visual_send = "<space>sc",
     send_file = "<space>sf",
     send_line = "<space>sl",
-    send_mark = "<space>sm",
+    send_mark = "<space>sw",
     mark_motion = "<space>mc",
     mark_visual = "<space>mc",
     remove_mark = "<space>md",
