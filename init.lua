@@ -284,9 +284,6 @@ local config = {
       {"tomasr/molokai"},
       {"jmcantrell/vim-virtualenv"},
       {"nanotee/sqls.nvim"},
-      {"SirVer/ultisnips"},
-      {"honza/vim-snippets"},
-      {"quangnguyen30192/cmp-nvim-ultisnips"},
       {"vim-scripts/vim-autopep8"}
 
       -- { "andweeb/presen,ce.nvim" },
