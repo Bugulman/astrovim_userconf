@@ -240,6 +240,7 @@ local config = {
       -- ["<leader>#"] = { ":lua require('telekasten').show_tags()<CR>", desc="cast"},
       ["<leader>zr"] = { ":lua require('telekasten').rename_note()<CR>", desc="rename_note"},
       ["<F2>"] = { ":IronReplHere<CR>", desc="IPYTHON"},
+      ["<laeder>pf"] = { ":set filetype=pov<CR>", desc="into_pov_fileformat"},
       --ultisnip mapping
       -- ["ff"] = { "UltiSnipsJumpForwardTrigger", desc="Ulti_forward"},
       -- ["bb"] = { "UltiSnipsJumpBackwardTrigger", desc="Ulti_backward"},
@@ -288,8 +289,11 @@ local config = {
       {"SirVer/ultisnips"},
       {"honza/vim-snippets"},
       {"quangnguyen30192/cmp-nvim-ultisnips"},
-      {"vim-scripts/vim-autopep8"}
-
+      {"vim-scripts/vim-autopep8"},
+  		{"kana/vim-textobj-user"},
+  		{"kana/vim-textobj-line"},
+  		{"GCBallesteros/vim-textobj-hydrogen"},
+  		{"GCBallesteros/jupytext.vim"}
       -- { "andweeb/presen,ce.nvim" },
       -- {
       --   "ray-x/lsp_signature.nvim",
@@ -433,16 +437,16 @@ dashboard.section.header.val = {
 dashboard.section.buttons.val = {
   button("f", "  Find file", ":Telescope find_files <CR>"),
   button("e", "  New file", ":ene <BAR> startinsert <CR>"),
-  button("p", " Find project", ":lua require('telescope').extensions.projects.projects()<CR>"),
+  button("p", "  Find project", ":lua require('telescope').extensions.projects.projects()<CR>"),
   button("r", "  Recent files", ":Telescope oldfiles <CR>"),
   button("t", "  Find text", ":Telescope live_grep <CR>"),
   -- dashboard.button("s", icons.ui.SignIn .. " Find Session", ":silent Autosession search <CR>"),
   button("s", "  Find Session", ":SessionManager load_session<CR>"),
   -- TODO: сделать линк на bookmarks
   --astronvim.alpha_button("LDR f m", "  Bookmarks  "),
-  button("c", " Config", ":e ~/.config/nvim/init.lua <CR>"),
+  button("c", "  Config", ":e ~/AppData/Local/nvim/lua/user/init.lua <CR>"),
   button("u", "  Update", ":PackerSync<CR>"),
-  button("q", " Quit", ":qa<CR>"),
+  button("q", "  Quit", ":qa<CR>"),
 }
 -- dashboard.section.header.opts.hl = "Include"
 -- dashboard.section.buttons.opts.hl = "Macro"
@@ -593,7 +597,7 @@ if not status_ok then
 end
 require('browse').setup({
   -- search provider you want to use
-  provider = "google", -- default
+  provider = "chrome", -- default
 })
 browse.setup {
   provider = "brave",
@@ -894,16 +898,14 @@ local iron = require("iron.core")
 iron.setup {
   config = {
     -- Whether a repl should be discarded or not
+    should_map_plug = false,
     scratch_repl = true,
     -- Your repl definitions come here
     repl_definition = {
-      sh = {
-        command = {"zsh"}
-      },
       python = {
-        command = { "ipython" }
-        -- format = require("iron.fts.common").bracketed_paste,
-      }
+        command = { "ipython" },
+        format = require("iron.fts.common").bracketed_paste,
+      },
     },
     preffered ={
       python="ipython"
@@ -911,23 +913,19 @@ iron.setup {
     },
     -- How the repl window will be displayed
     -- See below for more information
-    repl_open_cmd = require('iron.view').bottom(40),
+    -- repl_open_cmd = require('iron.view').bottom(40),
   },
   -- Iron doesn't set keymaps by default anymore.
   -- You can set them here or manually add keymaps to the functions in iron.core
   keymaps = {
-    send_motion = "<space>sc",
-    visual_send = "<space>sc",
+    send_motion = "ctr",
+    visual_send = "ctr",
     send_file = "<space>sf",
     send_line = "<space>sl",
     send_mark = "<space>sw",
     mark_motion = "<space>mc",
     mark_visual = "<space>mc",
-    remove_mark = "<space>md",
-    cr = "<space>s<cr>",
-    interrupt = "<space>s<space>",
-    exit = "<space>sq",
-    clear = "<space>cl",
+   clear = "<space>cl"
   },
   -- If the highlight is on, you can change how it looks
   -- For the available options, check nvim_set_hl
@@ -946,7 +944,7 @@ cmp.setup {
    fields = { "kind", "abbr", "menu" },
    format = function(entry, vim_item)
      -- Kind icons
-     vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+     -- vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
      -- vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
      vim_item.menu = ({
        nvim_lsp = "[LSP]",
