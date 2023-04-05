@@ -7,6 +7,14 @@ local home = vim.fn.expand("D:/soft/obsidian/My_md_zettel")
 vim.cmd [[
 let g:python3_host_prog = 'C:/Python310/python.exe'
 let g:virtualenv_directory = 'C:/Users/reg16/Envs'
+" Jupytext
+let g:jupytext_fmt = 'py'
+let g:jupytext_style = 'hydrogen'
+" repl
+let g:repl_filetype_commands = {
+  \ 'javascript': 'node',
+  \ 'python': 'ipython --no-autoindent',
+  \ }
 ]]
 local config = {
 
@@ -239,7 +247,10 @@ local config = {
       ["<leader>za"] = { ":lua require('telekasten').show_tags()<CR>", desc="show_tags"},
       -- ["<leader>#"] = { ":lua require('telekasten').show_tags()<CR>", desc="cast"},
       ["<leader>zr"] = { ":lua require('telekasten').rename_note()<CR>", desc="rename_note"},
-      ["<F2>"] = { ":IronReplHere<CR>", desc="IPYTHON"},
+      -- ["<F2>"] = { ":IronReplHere<CR>", desc="IPYTHON"},
+      ["<F2>"] = { ":ReplToggle<CR>", desc="IPYTHON"},
+      ["<leader>n"] = { ":ReplRunCell<CR>", desc="Run_Cell"},
+      ["<leader>r"] = { "<Plug>ReplSendLine", desc="Run_Line"},
       ["<laeder>pf"] = { ":set filetype=pov<CR>", desc="into_pov_fileformat"},
       --ultisnip mapping
       -- ["ff"] = { "UltiSnipsJumpForwardTrigger", desc="Ulti_forward"},
@@ -290,10 +301,13 @@ local config = {
       {"honza/vim-snippets"},
       {"quangnguyen30192/cmp-nvim-ultisnips"},
       {"vim-scripts/vim-autopep8"},
-  		{"kana/vim-textobj-user"},
+
+  	    {"kana/vim-textobj-user"},
   		{"kana/vim-textobj-line"},
   		{"GCBallesteros/vim-textobj-hydrogen"},
-  		{"GCBallesteros/jupytext.vim"}
+  		{"GCBallesteros/jupytext.vim"},
+        {"tpope/vim-repeat"},
+        {"pappasam/nvim-repl"}
       -- { "andweeb/presen,ce.nvim" },
       -- {
       --   "ray-x/lsp_signature.nvim",
@@ -597,7 +611,7 @@ if not status_ok then
 end
 require('browse').setup({
   -- search provider you want to use
-  provider = "chrome", -- default
+  provider = "google", -- default
 })
 browse.setup {
   provider = "brave",
@@ -905,10 +919,10 @@ iron.setup {
       python = {
         command = { "ipython" },
         format = require("iron.fts.common").bracketed_paste,
-      },
+      }
     },
     preffered ={
-      python="ipython"
+      -- python="ipython"
       -- clojure = "lein"
     },
     -- How the repl window will be displayed
@@ -918,8 +932,8 @@ iron.setup {
   -- Iron doesn't set keymaps by default anymore.
   -- You can set them here or manually add keymaps to the functions in iron.core
   keymaps = {
-    send_motion = "ctr",
-    visual_send = "ctr",
+    send_motion = "]n",
+    visual_send = "]n",
     send_file = "<space>sf",
     send_line = "<space>sl",
     send_mark = "<space>sw",
