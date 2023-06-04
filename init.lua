@@ -5,7 +5,7 @@ local home = vim.fn.expand("D:/soft/obsidian/My_md_zettel")
 -- normal format is "key = value". These also handle array like data structures
 -- where a value with no key simply has an implicit numeric key
 vim.cmd [[
-let g:python3_host_prog = 'C:/Python310/python.exe'
+let g:python3_host_prog = 'C:/Python311/python.exe'
 let g:virtualenv_directory = 'C:/Users/reg16/Envs'
 ]]
 local config = {
@@ -288,7 +288,15 @@ local config = {
       {"SirVer/ultisnips"},
       {"honza/vim-snippets"},
       {"quangnguyen30192/cmp-nvim-ultisnips"},
-      {"vim-scripts/vim-autopep8"}
+      {"vim-scripts/vim-autopep8"},
+      {
+        "huggingface/hfcc.nvim",
+        config = function()
+         require('hfcc').setup({
+        -- cf Setup
+      })
+        end,
+      }
 
       -- { "andweeb/presen,ce.nvim" },
       -- {
@@ -888,6 +896,27 @@ require('telekasten').setup({
     rename_update_links = true,
 })
 
+--NOTE: network config for using AI in code 
+local hfcc = require('hfcc')
+
+hfcc.setup({
+  api_token = "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", -- cf Install paragraph
+  model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
+  -- parameters that are added to the request body
+  query_params = {
+    max_new_tokens = 60,
+    temperature = 0.2,
+    top_p = 0.95,
+    stop_token = "<|endoftext|>",
+  },
+  -- set this if the model supports fill in the middle
+  fim = {
+    enabled = true,
+    prefix = "<fim_prefix>",
+    middle = "<fim_middle>",
+    suffix = "<fim_suffix>",
+  },
+})
 -- NOTE: iron config
 local iron = require("iron.core")
 
