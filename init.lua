@@ -301,6 +301,14 @@ local config = {
       {"honza/vim-snippets"},
       {"quangnguyen30192/cmp-nvim-ultisnips"},
       {"vim-scripts/vim-autopep8"},
+      {
+        "huggingface/hfcc.nvim",
+        config = function()
+         require('hfcc').setup({
+        -- cf Setup
+      })
+        end,
+      }
 
   	    {"kana/vim-textobj-user"},
   		{"kana/vim-textobj-line"},
@@ -906,6 +914,27 @@ require('telekasten').setup({
     rename_update_links = true,
 })
 
+--NOTE: network config for using AI in code 
+local hfcc = require('hfcc')
+
+hfcc.setup({
+  api_token = "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", -- cf Install paragraph
+  model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
+  -- parameters that are added to the request body
+  query_params = {
+    max_new_tokens = 60,
+    temperature = 0.2,
+    top_p = 0.95,
+    stop_token = "<|endoftext|>",
+  },
+  -- set this if the model supports fill in the middle
+  fim = {
+    enabled = true,
+    prefix = "<fim_prefix>",
+    middle = "<fim_middle>",
+    suffix = "<fim_suffix>",
+  },
+})
 -- NOTE: iron config
 local iron = require("iron.core")
 
